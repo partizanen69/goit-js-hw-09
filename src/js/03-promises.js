@@ -1,11 +1,13 @@
 const submitBtn = document.querySelector('button[type="submit"]');
+
 const form = document.querySelector('form');
-let inProgress = false;
+
+let inProgress = 0;
 
 submitBtn.addEventListener('click', async e => {
   e.preventDefault();
 
-  if (inProgress) {
+  if (inProgress > 0) {
     return;
   }
 
@@ -37,19 +39,27 @@ submitBtn.addEventListener('click', async e => {
     return;
   }
 
-  inProgress = true;
+  inProgress = amount;
+  submitBtn.disabled = true;
+  form.elements.delay.value = '';
+  form.elements.step.value = '';
+  form.elements.amount.value = '';
 
-  for (let i = 0; i <= amount; i++) {
+  for (let i = 0; i < amount; i++) {
     createPromise(i + 1, delay + step * i)
       .then(({ position, delay }) => {
         console.log(`✅ Fulfilled promise ${position} in ${delay}ms`);
       })
       .catch(({ position, delay }) => {
         console.log(`❌ Rejected promise ${position} in ${delay}ms`);
+      })
+      .finally(() => {
+        inProgress -= 1;
+        if (inProgress === 0) {
+          submitBtn.disabled = false;
+        }
       });
   }
-
-  inProgress = false;
 });
 
 function createPromise(position, delay) {
