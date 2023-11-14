@@ -15,6 +15,7 @@ window.onload = () => {
 
 const startOnClick = e => {
   startBtn.disabled = true;
+  stopBtn.disabled = false;
   timer = setInterval(() => {
     body.style.backgroundColor = getRandomHexColor();
   }, 1000);
@@ -23,6 +24,7 @@ const startOnClick = e => {
 const stopOnClick = e => {
   clearInterval(timer);
   startBtn.disabled = false;
+  stopBtn.disabled = true;
 };
 
 function getRandomHexColor() {
