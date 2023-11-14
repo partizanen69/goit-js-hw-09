@@ -1,6 +1,7 @@
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 
+const dateInput = document.getElementById('datetime-picker');
 const startBtn = document.querySelector('button[data-start]');
 const daysSpan = document.querySelector('span[data-days]');
 const hoursSpan = document.querySelector('span[data-hours]');
@@ -9,7 +10,7 @@ const secondsSpan = document.querySelector('span[data-seconds]');
 
 let dateSelected = null;
 
-const datePicker = flatpickr(document.getElementById('datetime-picker'), {
+const datePicker = flatpickr(dateInput, {
   enableTime: true,
   time_24hr: true,
   defaultDate: new Date(),
@@ -33,8 +34,9 @@ function onDatePickerClose(selectedDates) {
 
 function onStart() {
   startBtn.disabled = true;
+  dateInput.disabled = true;
 
-  setInterval(() => {
+  const timer = setInterval(() => {
     const remainingMs = dateSelected - new Date();
     const { days, hours, minutes, seconds } = convertMs(remainingMs);
 
@@ -42,6 +44,12 @@ function onStart() {
     hoursSpan.innerText = addLeadingZero(hours);
     minutesSpan.innerText = addLeadingZero(minutes);
     secondsSpan.innerText = addLeadingZero(seconds);
+
+    if (!days && !hours && !minutes && !seconds) {
+      clearInterval(timer);
+      startBtn.disabled = false;
+      dateInput.disabled = false;
+    }
   }, 1000);
 }
 
